@@ -1,22 +1,29 @@
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { literal, z } from 'zod';
 
 const validationSchema = z
   .object({
-    firstName: z.string().min(1, { message: 'Firstname is required' }),
-    lastName: z.string().min(1, { message: 'Lastname is required' }),
+    firstName: z
+      .string()
+      .min(1, { message: 'Firstname is required' })
+      .max(32, 'First Name must be less than 32 characters'),
+    lastName: z
+      .string()
+      .min(1, { message: 'Lastname is required' })
+      .max(32, 'Last Name must be less than 32 characters'),
     email: z.string().min(1, { message: 'Email is required' }).email({
       message: 'Must be a valid email',
     }),
     password: z
       .string()
-      .min(6, { message: 'Password must be atleast 6 characters' }),
+      .min(6, { message: 'Password must be atleast 6 characters' })
+      .max(32, 'Password must be less than 32 characters'),
     confirmPassword: z
       .string()
       .min(1, { message: 'Confirm Password is required' }),
-    terms: z.literal(true, {
+    terms: literal(true, {
       errorMap: () => ({ message: 'You must accept Terms and Conditions' }),
     }),
   })
@@ -36,7 +43,8 @@ const Form = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const onSubmit: SubmitHandler<ValidationSchema> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<ValidationSchema> = (data) =>
+    console.table(data);
 
   return (
     <form className="px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>
